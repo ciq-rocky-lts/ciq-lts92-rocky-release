@@ -1,0 +1,60 @@
+# rocky-extras.repo
+#
+# Adapted with vault/ use for CIQ LTS subscription
+#
+
+[extras]
+name=Rocky Linux $releasever - Extras
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=extras-$releasever$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/extras/$basearch/os/
+gpgcheck=1
+enabled=1
+countme=1
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9
+
+[extras-debug]
+name=Rocky Linux $releasever - Extras Debug
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=extras-$releasever-debug$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/extras/$basearch/debug/tree/
+gpgcheck=1
+enabled=0
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9
+
+[extras-source]
+name=Rocky Linux $releasever - Extras Source
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=extras-$releasever-source$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/extras/source/tree/
+gpgcheck=1
+enabled=0
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9
+
+[plus]
+name=Rocky Linux $releasever - Plus
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=plus-$releasever$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/plus/$basearch/os/
+gpgcheck=1
+enabled=0
+countme=1
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9
+
+[plus-debug]
+name=Rocky Linux $releasever - Plus - Debug
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=plus-$releasever-debug$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/plus/$basearch/debug/tree/
+gpgcheck=1
+enabled=0
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9
+
+[plus-source]
+name=Rocky Linux $releasever - Plus - Source
+#mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=source&repo=plus-$releasever-source$rltype
+baseurl=http://dl.rockylinux.org/vault/rocky/9.2/plus/source/tree/
+gpgcheck=1
+enabled=0
+metadata_expire=6h
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-Rocky-9

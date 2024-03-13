@@ -1,0 +1,74 @@
+# -*- coding: utf-8 -*-
+
+We want to thank you for installing Rocky Linux.
+
+The Rocky Linux OS Distribution would not be possible without the hard work and
+dedication of the community. Building a distribution is far from easy, but with
+unified visions and goals, anything is possible, and Rocky is one of many
+examples of this.
+
+The outpouring support from the community and the amount of people who to
+together to support us, we want to thank you for believing in us and giving us
+a chance. And as always, we hope you enjoy this release.
+
+Thank you.
+
+# Special Recognition #
+  Mustafa Gezen
+  Skip Grube
+  Sherif Nagy
+  Pablo Greco
+  Louis Abel
+  Neil Hanlon
+  Taylor Goodwill
+  Natalie Forde
+  Alejandro Ramallo
+  Wale Soyinka
+  Ezequiel Bruni
+  Trevor Cooper
+  Chris Stackpole
+  Steven Spencer
+  @NezSez
+  @alangm
+  @lumarel
+  Al Bowles (@raktajino)
+  Peter Ajamian (@pj)
+  Scott Shinn
+
+# Rocky Linux Teams and Operations #
+
+Leadership:
+  Gregory Kurtzer
+  Brian Clemens
+
+Infrastructure and Operations:
+  Taylor Goodwill
+  Neil Hanlon
+  Louis Abel
+  Randolh (@meltro)
+  Patric Roberts
+  Mustafa Gezen
+
+Release Engineering/Core:
+  Louis Abel
+  Mustafa Gezen
+  Skip Grube
+  Sherif Nagy
+  Pablo Greco
+  Neil Hanlon
+  Taylor Goodwill
+
+Security:
+  Rob Felsburg
+  Benjamin Agner
+  Scott Shinn
+
+Documentation:
+  Wale Soyinka
+
+Web/Design:
+  Michael Kinder
+
+Testing:
+  Trevor Cooper
+  Chris Stackpole
