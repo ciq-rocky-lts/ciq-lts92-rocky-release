@@ -21,7 +21,7 @@
 %define distro_code  Blue Onyx
 %define major        9
 %define minor        2
-%define rocky_rel    2%{?rllh:.%{rllh}}%{!?rllh:.1}
+%define rocky_rel    3%{?rllh:.%{rllh}}%{!?rllh:.1}
 %define rpm_license  BSD-3-Clause
 %define dist         .el%{major}
 %define home_url     https://rockylinux.org/
@@ -29,7 +29,7 @@
 %define debug_url    https://debuginfod.rockylinux.org/
 %define dist_vendor  RESF
 
-%define contentdir   pub/rocky
+%define contentdir   vault/rocky
 %define sigcontent   pub/sig
 %define rlosid       rocky
 
@@ -118,7 +118,7 @@ Provides:       centos-release-eula = %{version}-%{release}
 
 
 # CIQ LTS Release override section:
-# We must require both rocky-repos and the ciq-specific repos package, both of which are provided by the CIQ one 
+# We must require both rocky-repos and the ciq-specific repos package, both of which are provided by the CIQ one
 Provides: ciq-lts92-rocky-release = %{major}.%{minor}
 Requires: ciq-rocky92-repos(%{major})
 Requires: rocky-repos(%{major})
@@ -134,6 +134,7 @@ Conflicts: rocky-release
 # GPG Keys (100-199)
 Source101:      RPM-GPG-KEY-Rocky-%{major}
 Source102:      RPM-GPG-KEY-Rocky-%{major}-Testing
+Source110:      https://ciq.com/keys/rpm-gpg-key-ciq
 
 # Release Sources (200-499)
 Source200:      EULA
@@ -160,6 +161,7 @@ Source1200:     rocky.repo
 Source1201:     rocky-addons.repo
 Source1202:     rocky-extras.repo
 Source1203:     rocky-devel.repo
+Source1204:     lts-cloud.repo
 
 # Add ons (1300-1399)
 Source1300:     rocky.1.gz
@@ -182,6 +184,7 @@ Source1416:     rocky-shim.der
 %description
 %{distro_name} release files.
 
+
 %package     -n ciq-rocky92-repos%{?rltype}
 Summary:        %{distro_name} Package Repositories - CIQ LTS %{major}.%{minor}
 License:        %{rpm_license}
@@ -191,7 +194,7 @@ Requires:       system-release = %{version}-%{release}
 Requires:       rocky-gpg-keys%{?rltype}
 Conflicts:      %{name} < 8.0
 
-# CIQ LTS Override: In addition to providing "rocky-repos(9)", we also provide "ciq-rocky92-repos(9)" 
+# CIQ LTS Override: In addition to providing "rocky-repos(9)", we also provide "ciq-rocky92-repos(9)"
 Provides: ciq-rocky92-repos(%{major}) = %{major}.%{minor}
 Conflicts: rocky-repos
 Obsoletes: rocky-repos
@@ -200,10 +203,40 @@ Obsoletes: rocky-repos
 Conflicts: ciq-rocky-repos
 Obsoletes: ciq-rocky-repos
 
-
+Conflicts: ciq-rocky92-cloud-repos%{?rltype}
 
 %description -n ciq-rocky92-repos%{?rltype}
 %{distro_name} package repository files for yum/dnf - Adapted for CIQ LTS %{major}.%{minor} release
+
+
+%package     -n ciq-rocky92-cloud-repos%{?rltype}
+Summary:        Cloud Package Repositories - CIQ LTS %{major}.%{minor}
+License:        %{rpm_license}
+Provides:       system-repos = %{version}-%{release}
+Provides:       rocky-repos(%{major}) = %{full_release_version}
+Requires:       system-release = %{version}-%{release}
+Requires:       rocky-gpg-keys%{?rltype}
+Requires:       python3-rlc-cloud-repos
+Conflicts:      %{name} < 8.0
+
+# CIQ LTS Override: In addition to providing "rocky-repos(9)", we also provide "ciq-rocky92-repos(9)"
+Provides: ciq-rocky92-repos(%{major}) = %{major}.%{minor}
+Conflicts: rocky-repos
+
+# We also obsolete the older ciq-rocky-repos if a user has that installed.  There can be only 1 -repos package:
+Conflicts: ciq-rocky-repos
+
+Conflicts: ciq-rocky92-repos%{?rltype}
+
+%description -n ciq-rocky92-cloud-repos%{?rltype}
+%{distro_name} package repository files for cloud-based images for
+yum/dnf. This package contains the repository configurations for Rocky
+Linux repositories specifically designed for cloud deployments. It
+should not be used for bare metal or virtual machine
+installations. Specifically, this package will definitely break
+upgrades and installations if your system is not running in a cloud
+environment.
+
 
 %package     -n rocky-gpg-keys%{?rltype}
 Summary:        Rocky RPM GPG Keys
@@ -399,11 +432,13 @@ install -p -m 0644 %{SOURCE1200} %{buildroot}%{_sysconfdir}/yum.repos.d/
 install -p -m 0644 %{SOURCE1201} %{buildroot}%{_sysconfdir}/yum.repos.d/
 install -p -m 0644 %{SOURCE1202} %{buildroot}%{_sysconfdir}/yum.repos.d/
 install -p -m 0644 %{SOURCE1203} %{buildroot}%{_sysconfdir}/yum.repos.d/
+install -p -m 0644 %{SOURCE1204} %{buildroot}%{_sysconfdir}/yum.repos.d/
 
 # dnf stuff
 install -d -m 0755 %{buildroot}%{_sysconfdir}/dnf/vars
 echo "%{contentdir}" > %{buildroot}%{_sysconfdir}/dnf/vars/contentdir
 echo "%{sigcontent}" > %{buildroot}%{_sysconfdir}/dnf/vars/sigcontentdir
+echo "%{full_release_version}" > %{buildroot}%{_sysconfdir}/dnf/vars/releasever
 echo "%{?rltype}" > %{buildroot}%{_sysconfdir}/dnf/vars/rltype
 echo "%{major}-stream" > %{buildroot}%{_sysconfdir}/dnf/vars/stream
 
@@ -411,12 +446,13 @@ echo "%{major}-stream" > %{buildroot}%{_sysconfdir}/dnf/vars/stream
 install -d -m 0755 %{buildroot}%{_sysconfdir}/pki/rpm-gpg
 install -p -m 0644 %{SOURCE101} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/
 install -p -m 0644 %{SOURCE102} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/
+install -p -m 0644 %{SOURCE110} %{buildroot}%{_sysconfdir}/pki/rpm-gpg/RPM-GPG-KEY-CIQ
 # end dnf repo section
 ################################################################################
 
 ################################################################################
 # lookahead overrides
-# TODO: Is there a cleaner way? 
+# TODO: Is there a cleaner way?
 %if %{with rllookahead}
 install -m 0644 %{SOURCE400} %{buildroot}/%{_prefix}/lib/systemd/system-preset/85-display-manager.preset
 install -m 0644 %{SOURCE401} %{buildroot}/%{_prefix}/lib/systemd/system-preset/90-default.preset
@@ -459,6 +495,16 @@ install -m 0644 %{SOURCE404} %{buildroot}/%{_prefix}/lib/sysctl.d/50-redhat.conf
 %config(noreplace) %{_sysconfdir}/yum.repos.d/rocky-devel.repo
 %config(noreplace) %{_sysconfdir}/dnf/vars/contentdir
 %config(noreplace) %{_sysconfdir}/dnf/vars/sigcontentdir
+%config(noreplace) %{_sysconfdir}/dnf/vars/releasever
+%config(noreplace) %{_sysconfdir}/dnf/vars/rltype
+%config(noreplace) %{_sysconfdir}/dnf/vars/stream
+
+%files -n ciq-rocky92-cloud-repos%{?rltype}
+%license docs/LICENSE
+%config(noreplace) %{_sysconfdir}/yum.repos.d/lts-cloud.repo
+%config(noreplace) %{_sysconfdir}/dnf/vars/contentdir
+%config(noreplace) %{_sysconfdir}/dnf/vars/sigcontentdir
+%config(noreplace) %{_sysconfdir}/dnf/vars/releasever
 %config(noreplace) %{_sysconfdir}/dnf/vars/rltype
 %config(noreplace) %{_sysconfdir}/dnf/vars/stream
 
@@ -473,6 +519,12 @@ install -m 0644 %{SOURCE404} %{buildroot}/%{_prefix}/lib/sysctl.d/50-redhat.conf
 %{_datadir}/pki/sb-certs/*
 
 %changelog
+* Mon May 05 2025 Trinity Quirk <tquirk@ciq.com> - 9.2-3.1
+- Add CIQ signing key
+- Use Rocky vault repo for base packages
+- Add ciq-rocky88-cloud-repos subpackage
+- Fix double-obsolete error when upgrading from stock Rocky
+
 * Sat Dec 02 2023 Skip Grube <sgrube@ciq.com> - 9.2-2.1
 - Forked for CIQ LTS 9.2 (with package overrides defined)
 
