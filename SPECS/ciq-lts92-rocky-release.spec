@@ -21,7 +21,7 @@
 %define distro_code  Blue Onyx
 %define major        9
 %define minor        2
-%define rocky_rel    4%{?rllh:.%{rllh}}%{!?rllh:.1}
+%define rocky_rel    5%{?rllh:.%{rllh}}%{!?rllh:.1}
 %define rpm_license  BSD-3-Clause
 %define dist         .el%{major}
 %define home_url     https://rockylinux.org/
@@ -117,14 +117,10 @@ Provides:       rocky-release-eula  = %{version}-%{release}
 Provides:       redhat-release-eula = %{version}-%{release}
 Provides:       centos-release-eula = %{version}-%{release}
 
-
-
+Requires:       rocky-gpg-keys%{?rltype}
 
 # CIQ LTS Release override section:
-# We must require both rocky-repos and the ciq-specific repos package, both of which are provided by the CIQ one
 Provides: ciq-lts92-rocky-release = %{major}.%{minor}
-Requires: ciq-rocky92-repos(%{major})
-Requires: rocky-repos(%{major})
 
 # This package should conflict and obsolete the default rocky-release package:  can't have both installed at the same time(!)
 Obsoletes: rocky-release
@@ -194,7 +190,6 @@ License:        %{rpm_license}
 Provides:       system-repos = %{version}-%{release}
 Provides:       rocky-repos(%{major}) = %{full_release_version}
 Requires:       system-release = %{version}-%{release}
-Requires:       rocky-gpg-keys%{?rltype}
 Conflicts:      %{name} < 8.0
 
 # CIQ LTS Override: In addition to providing "rocky-repos(9)", we also provide "ciq-rocky92-repos(9)"
@@ -218,7 +213,6 @@ License:        %{rpm_license}
 Provides:       system-repos = %{version}-%{release}
 Provides:       rocky-repos(%{major}) = %{full_release_version}
 Requires:       system-release = %{version}-%{release}
-Requires:       rocky-gpg-keys%{?rltype}
 Requires:       python3-rlc-cloud-repos
 Conflicts:      %{name} < 8.0
 
@@ -441,7 +435,6 @@ install -p -m 0644 %{SOURCE1204} %{buildroot}%{_sysconfdir}/yum.repos.d/
 install -d -m 0755 %{buildroot}%{_sysconfdir}/dnf/vars
 echo "%{contentdir}" > %{buildroot}%{_sysconfdir}/dnf/vars/contentdir
 echo "%{sigcontent}" > %{buildroot}%{_sysconfdir}/dnf/vars/sigcontentdir
-echo "%{full_release_version}" > %{buildroot}%{_sysconfdir}/dnf/vars/releasever
 echo "%{?rltype}" > %{buildroot}%{_sysconfdir}/dnf/vars/rltype
 echo "%{major}-stream" > %{buildroot}%{_sysconfdir}/dnf/vars/stream
 echo "%{cloudcontentdir}" > %{buildroot}%{_sysconfdir}/dnf/vars/cloudcontentdir
@@ -500,7 +493,6 @@ install -m 0644 %{SOURCE404} %{buildroot}/%{_prefix}/lib/sysctl.d/50-redhat.conf
 %config(noreplace) %{_sysconfdir}/yum.repos.d/rocky-devel.repo
 %config(noreplace) %{_sysconfdir}/dnf/vars/contentdir
 %config(noreplace) %{_sysconfdir}/dnf/vars/sigcontentdir
-%config(noreplace) %{_sysconfdir}/dnf/vars/releasever
 %config(noreplace) %{_sysconfdir}/dnf/vars/rltype
 %config(noreplace) %{_sysconfdir}/dnf/vars/stream
 
@@ -509,7 +501,6 @@ install -m 0644 %{SOURCE404} %{buildroot}/%{_prefix}/lib/sysctl.d/50-redhat.conf
 %config(noreplace) %{_sysconfdir}/yum.repos.d/lts-cloud.repo
 %config(noreplace) %{_sysconfdir}/dnf/vars/contentdir
 %config(noreplace) %{_sysconfdir}/dnf/vars/sigcontentdir
-%config(noreplace) %{_sysconfdir}/dnf/vars/releasever
 %config(noreplace) %{_sysconfdir}/dnf/vars/rltype
 %config(noreplace) %{_sysconfdir}/dnf/vars/stream
 %config(noreplace) %{_sysconfdir}/dnf/vars/cloudcontentdir
@@ -548,6 +539,11 @@ if [ "$1" = "0" ]; then
 fi
 
 %changelog
+* Wed Jul 23 2025 Trinity Quirk <tquirk@ciq.com> - 9.2-5.1
+- Drop LTS-specific releasever variable (LE-3609)
+- Move dependency on GPG keys subpackage to main package (LE-3610)
+- Drop dependency on -repos subpackages from main package (LE-3610)
+
 * Mon Jun 30 2025 Trinity Quirk <tquirk@ciq.com> - 9.2-4.1
 - Add support for AWS cloud mirroring
 
